@@ -37,11 +37,20 @@ const orderSchema = new mongoose.Schema({
     default: "pending"
   },
 
-  orderStatus: {
-    type: String,
-    enum: ["placed", "packed", "shipped", "delivered", "cancelled"],
-    default: "placed"
-  },
+ orderStatus: {
+  type: String,
+  enum: [
+    "placed",
+    "packed",
+    "shipped",
+    "picked",
+    "on-the-way",
+    "delivered",
+    "cancelled"
+  ],
+  default: "placed"
+},
+
 
   assignedDeliveryBoy: {
     type: mongoose.Schema.Types.ObjectId,

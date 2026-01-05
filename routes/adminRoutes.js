@@ -19,18 +19,20 @@ router.get("/orders", auth, admin, async (req, res) => {
 // 🔥 Update Order Status
 router.put("/order/status/:id", auth, admin, async (req, res) => {
   const { status } = req.body;
-  const valid = ["placed","packed","shipped","delivered","cancelled"];
 
-  if(!valid.includes(status)) 
-    return res.status(400).json({msg:"Invalid Status"});
+  const allowedStatus = ["placed", "packed", "shipped", "delivered"];
+
+  if (!allowedStatus.includes(status)) {
+    return res.status(400).json({ msg: "Invalid Status" });
+  }
 
   const order = await Order.findById(req.params.id);
-  if(!order) return res.status(404).json({msg:"Order Not Found"});
+  if (!order) return res.status(404).json({ msg: "Order not found" });
 
   order.orderStatus = status;
   await order.save();
 
-  res.json({msg:"Status Updated", order});
+  res.json({ msg: "Order Status Updated", order });
 });
 
 // 🔥 Cancel Order + Restore Stock
@@ -50,6 +52,18 @@ router.put("/order/cancel/:id", auth, admin, async (req, res) => {
   await order.save();
 
   res.json({msg:"Order Cancelled & Stock Restored"});
+});
+
+router.put("/order/assign/:id", auth, admin, async (req, res) => {
+  const { deliveryBoyId } = req.body;
+
+  const order = await Order.findById(req.params.id);
+  if (!order) return res.status(404).json({ msg: "Order Not Found" });
+
+  order.assignedDeliveryBoy = deliveryBoyId;
+  await order.save();
+
+  res.json({ msg: "Delivery Boy Assigned", order });
 });
 
 module.exports = router;

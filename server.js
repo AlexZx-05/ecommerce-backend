@@ -24,6 +24,9 @@ app.use("/api/address", require("./routes/addressRoutes"));
 
 app.use("/api/order", require("./routes/orderRoutes"));
 
+app.use("/api/delivery", require("./routes/deliveryAuthRoutes"));
+app.use("/api/delivery", require("./routes/deliveryOrderRoutes"));
+
 // Protected Test Route
 app.get("/protected", auth, (req, res) => {
   res.json({ msg: "Protected Route Access Granted", user: req.user });
