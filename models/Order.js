@@ -32,25 +32,30 @@ const orderSchema = new mongoose.Schema({
   },
 
   paymentStatus: {
-    type: String,
-    enum: ["pending", "paid", "failed"],
-    default: "pending"
-  },
-
- orderStatus: {
   type: String,
-  enum: [
-    "placed",
-    "packed",
-    "shipped",
-    "picked",
-    "on-the-way",
-    "delivered",
-    "cancelled"
-  ],
-  default: "placed"
-},
+  enum: ["pending", "paid", "failed", "refunded"],
+  default: "pending"
+}
+,
+  
 
+  razorpayOrderId: String,
+  razorpayPaymentId: String,
+  razorpaySignature: String,
+
+  orderStatus: {
+    type: String,
+    enum: [
+      "placed",
+      "packed",
+      "shipped",
+      "picked",
+      "on-the-way",
+      "delivered",
+      "cancelled"
+    ],
+    default: "placed"
+  },
 
   assignedDeliveryBoy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -58,6 +63,25 @@ const orderSchema = new mongoose.Schema({
     default: null
   },
 
+  // 🔥 ADD THIS
+  trackingLocation: {
+    lat: Number,
+    lng: Number,
+    updatedAt: Date
+  },
+  refundStatus: {
+  type: String,
+  enum: ["none", "requested", "processed"],
+  default: "none"
+},
+
+refundAmount: {
+  type: Number,
+  default: 0
+}
+
+
 }, { timestamps: true });
+
 
 module.exports = mongoose.model("Order", orderSchema);

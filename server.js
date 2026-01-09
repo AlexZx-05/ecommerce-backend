@@ -15,15 +15,13 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
-
 app.use("/api/products", require("./routes/productRoutes"));
-
 app.use("/api/cart", require("./routes/cartRoutes"));
-
 app.use("/api/address", require("./routes/addressRoutes"));
-
 app.use("/api/order", require("./routes/orderRoutes"));
+app.use("/api/payment", require("./routes/paymentRoutes"));
 
+// Delivery App
 app.use("/api/delivery", require("./routes/deliveryAuthRoutes"));
 app.use("/api/delivery", require("./routes/deliveryOrderRoutes"));
 
