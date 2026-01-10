@@ -63,16 +63,16 @@ router.put("/location/:id", auth, deliveryOnly, async (req, res) => {
   const order = await Order.findById(req.params.id);
   if (!order) return res.status(404).json({ msg: "Order Not Found" });
 
-  order.trackingLocation = {
-    lat,
-    lng,
-    updatedAt: new Date()
-  };
-
+  order.trackingLocation = { lat, lng, updatedAt: new Date() };
   await order.save();
 
-  res.json({ msg: "Location Updated", trackingLocation: order.trackingLocation });
+  // Emit live location
+  const io = req.app.get("io");
+  io.to(req.params.id).emit("locationBroadcast", { lat, lng });
+
+  res.json({ msg: "Location Updated" });
 });
+
 
 
 module.exports = router;

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Order Tracking</title>
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Live Delivery Tracking</h2>
+  <div id="map"></div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+  <script>
+    const ORDER_ID = "69510eb308e73e5017692e0c";   // your order id
+
+    // Customer (delivery destination)
+    const customerLocation = { lat: 15.6225, lng: 76.9040 };
+
+    const socket = io("http://localhost:5000");
+
+    let map;
+    let marker;
+    let directionsService;
+    let directionsRenderer;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 15,
+        center: customerLocation
+      });
+
+      // Delivery boy marker
+      marker = new google.maps.Marker({
+        position: customerLocation,
+        map: map,
+        label: "🚚"
+      });
+
+      // Customer marker
+      new google.maps.Marker({
+        position: customerLocation,
+        map: map,
+        label: "🏠"
+      });
+
+      // Google directions
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({
+        suppressMarkers: true,
+        polylineOptions: {
+          strokeColor: "#0b5cff",
+          strokeWeight: 5
+        }
+      });
+      directionsRenderer.setMap(map);
+
+      // Join socket room
+      socket.emit("joinOrderRoom", ORDER_ID);
+
+      // Listen to live location
+      socket.on("locationBroadcast", (data) => {
+        const pos = { lat: data.lat, lng: data.lng };
+
+        marker.setPosition(pos);
+        map.setCenter(pos);
+
+        // Draw route
+        directionsService.route(
+          {
+            origin: pos,
+            destination: customerLocation,
+            travelMode: "DRIVING"
+          },
+          (result, status) => {
+            if (status === "OK") {
+              directionsRenderer.setDirections(result);
+            }
+          }
+        );
+      });
+    }
+  </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDe5HoUo_rEX-5IEDH6SzPVCXK7Vs3gzDg&callback=initMap"
+          async defer></script>
+
+</body>
+</html>
