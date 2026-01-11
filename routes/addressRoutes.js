@@ -7,16 +7,38 @@ const Address = require("../models/Address");
 // Add Address
 router.post("/add", auth, async (req, res) => {
   try {
+    const {
+      name,
+      phone,
+      addressLine,
+      city,
+      state,
+      pincode,
+      landmark,
+      location
+    } = req.body;
+
+    if (!location || !location.lat || !location.lng) {
+      return res.status(400).json({ msg: "Location (lat, lng) required" });
+    }
+
     const address = new Address({
       user: req.user.id,
-      ...req.body
+      name,
+      phone,
+      addressLine,
+      city,
+      state,
+      pincode,
+      landmark,
+      location
     });
 
     await address.save();
     res.json({ msg: "Address Added", address });
-
   } catch (err) {
-    res.status(500).json({ msg: "Server Error" });
+    console.error(err);
+    res.status(500).json({ msg: "Address save failed" });
   }
 });
 

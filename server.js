@@ -35,6 +35,8 @@ app.use("/api/delivery", require("./routes/deliveryAuthRoutes"));
 app.use("/api/delivery", require("./routes/deliveryOrderRoutes"));
 app.use(express.static("public"));
 
+app.use("/api/eta", require("./routes/etaRoutes"));
+
 // Socket logic
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);

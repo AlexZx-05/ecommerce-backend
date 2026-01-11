@@ -83,5 +83,24 @@ router.get("/:id", auth, async (req, res) => {
 
   res.json(order);
 });
+// ================================
+// UPDATE ORDER ADDRESS (for ETA & Maps)
+// ================================
 
+router.put("/update-address/:id", auth, async (req, res) => {
+  try {
+    const { addressId } = req.body;
+
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ msg: "Order not found" });
+
+    order.address = addressId;
+    await order.save();
+
+    res.json({ msg: "Order address updated", order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Failed to update address" });
+  }
+});
 module.exports = router;
